@@ -1,0 +1,5 @@
+scrapy
+w3lib
+slybot
+hubstorage
+git+https://github.com/scrapinghub/scrapinghub-entrypoint-scrapy.git
