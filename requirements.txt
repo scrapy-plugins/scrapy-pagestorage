@@ -1,3 +1,2 @@
 scrapy
-slybot
 hubstorage

@@ -10,9 +10,7 @@ from scrapy.exceptions import NotConfigured, IgnoreRequest
 from scrapy.utils.request import request_fingerprint
 from scrapy.http import TextResponse
 from scrapy import log
-from slybot.item import SlybotItem
-
-from sh_scrapy.hsref import hsref
+from scrapy.item import DictItem
 
 
 _COLLECTION_NAME = "Pages"
@@ -27,9 +25,15 @@ class PageStorageMiddleware:
         raise NotConfigured
 
     def __init__(self, crawler):
+        # FIXME move sh_scrapy.hsref to python-hubstorage and drop it
+        try:
+            from sh_scrapy.hsref import hsref
+            self.hsref = hsref
+        except ImportError:
+            raise NotConfigured
         settings = crawler.settings
         mode = 'cs'
-        if settings['PAGE_STORAGE_MODE'] == 'VERSIONED_CACHE':
+        if settings.get('PAGE_STORAGE_MODE') == 'VERSIONED_CACHE':
             mode = 'vcs'
         self.enabled, self.on_error_enabled = _get_enabled_status(settings)
         self.limits = {
@@ -66,7 +70,7 @@ class PageStorageMiddleware:
             fp = request_fingerprint(response.request)
             payload = {
                 "_key": fp,
-                "_jobid": hsref.job.key,
+                "_jobid": self.hsref.job.key,
                 "_type": "_pageitem",
                 "_encoding": response.encoding,
                 "url": response.url,
@@ -79,6 +83,7 @@ class PageStorageMiddleware:
             if len(response.body) > self._writer.maxitemsize:
                 spider.log("Page not saved, body too large: <%s>" %
                            response.url, level=log.WARNING)
+                print 'alaaaaar,'
                 return
 
             payload["body"] = response.body_as_unicode()
@@ -92,8 +97,8 @@ class PageStorageMiddleware:
         fp = request_fingerprint(response.request)
         try:
             for r in result:
-                if isinstance(r, SlybotItem):
-                    r["_cached_page_id"] = fp
+                if isinstance(r, DictItem):
+                    r._values["_cached_page_id"] = fp
                 yield r
         except Exception as exc:
             self.process_spider_exception(response, exc, spider)
