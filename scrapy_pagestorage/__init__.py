@@ -83,7 +83,6 @@ class PageStorageMiddleware:
             if len(response.body) > self._writer.maxitemsize:
                 spider.log("Page not saved, body too large: <%s>" %
                            response.url, level=log.WARNING)
-                print 'alaaaaar,'
                 return
 
             payload["body"] = response.body_as_unicode()
