@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
 setup(
     name='scrapy-pagestorage',
@@ -8,8 +8,7 @@ setup(
     long_description=open('README.rst').read(),
     author='Scrapy developers',
     license='BSD',
-    packages=find_packages(exclude=('tests', 'tests.*')),
-    include_package_data=True,
+    py_modules=['scrapy_pagestorage'],
     zip_safe=False,
     author_email='opensource@scrapinghub.com',
     platforms=['Any'],
