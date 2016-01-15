@@ -20,9 +20,12 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
     ],
-    requires=['scrapy (>=1.0.3)'],
+    requires=['Scrapy (>=1.0.3)'],
+    install_requires=[
+        'scrapinghub-entrypoint-scrapy==0.4'
+    ],
     dependency_links=[
         'http://github.com/scrapinghub/scrapinghub-entrypoint-scrapy/'
-        'tarball/0.4#egg=scrapinghub-entrypoint-scrapy-0.4',
+        'tarball/0.4#egg=scrapinghub-entrypoint-scrapy',
     ],
 )
