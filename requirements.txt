@@ -1,2 +1,2 @@
-scrapy
-hubstorage
+Scrapy>=1.0.3
+hubstorage>=0.21.0
