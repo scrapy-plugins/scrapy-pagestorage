@@ -10,7 +10,7 @@ from scrapy.exceptions import NotConfigured, IgnoreRequest
 from scrapy.utils.request import request_fingerprint
 from scrapy.http import TextResponse
 from scrapy import log
-from scrapy.item import DictItem
+from scrapy.item import DictItem, Field
 
 
 _COLLECTION_NAME = "Pages"
@@ -97,6 +97,7 @@ class PageStorageMiddleware:
         try:
             for r in result:
                 if isinstance(r, DictItem):
+                    r.fields["_cached_page_id"] = Field()
                     r._values["_cached_page_id"] = fp
                 yield r
         except Exception as exc:
