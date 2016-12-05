@@ -4,8 +4,8 @@ Middleware for implementing visited pages storage using hubstorage
 import os
 from cgi import parse_qsl
 
-from hubstorage import ValueTooLarge
-from hubstorage.utils import urlpathjoin
+from scrapinghub.hubstorage import ValueTooLarge
+from scrapinghub.hubstorage.utils import urlpathjoin
 from scrapy.exceptions import NotConfigured, IgnoreRequest
 from scrapy.utils.request import request_fingerprint
 from scrapy.http import TextResponse
