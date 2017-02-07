@@ -22,7 +22,7 @@ setup(
     ],
     install_requires=[
         'Scrapy>=1.0.3',
-        'hubstorage>=0.21',
+        'scrapinghub>=1.9.0',
         'scrapinghub-entrypoint-scrapy>=0.4',
     ],
     dependency_links=[
