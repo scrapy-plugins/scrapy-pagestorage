@@ -99,8 +99,12 @@ class PageStorageMiddlewareTestCase(TestCase):
     def test_process_spider_output(self):
         fake_response = mock.Mock()
         fake_response.request = Request('http://source-request')
+
+        def sort_requests_and_items(val):
+            return val.__class__.__name__
         fake_result = sorted([Request('ftp://req1'), Request('https://req2'),
-                              Response('http://source-request'), DictItem()])
+                              Response('http://source-request'), DictItem()],
+                             key=sort_requests_and_items)
         results = self.instance.process_spider_output(
             fake_response, fake_result, self.spider)
         assert isinstance(results, types.GeneratorType)
@@ -160,7 +164,8 @@ class PageStorageMiddlewareTestCase(TestCase):
         # get request with large body
         resp1 = TextResponse('http://resp1',
                              request=Request('http://req1'),
-                             body='looong loong body')
+                             body='looong loong body',
+                             encoding='cp1251')
         self.instance.save_response(resp1, self.spider)
         assert not self.instance._writer.write.called
         # get request with ok-body
@@ -168,8 +173,8 @@ class PageStorageMiddlewareTestCase(TestCase):
         self.instance.hsref.job.key = '123/45/67'
         resp2 = TextResponse('http://resp2', request=Request('http://req2'),
                              body='body', encoding='cp1251',
-                             headers={'Set-Cookie': ['coo1=test;abc=1',
-                                                     'coo2=tes1;cbd=2']})
+                             headers={'Set-Cookie': [b'coo1=test;abc=1',
+                                                     b'coo2=tes1;cbd=2']})
         self.instance.save_response(resp2, self.spider)
         self.instance._writer.write.assert_called_with(
             {'body': u'body', '_encoding': 'cp1251', '_type': '_pageitem',
@@ -185,15 +190,15 @@ class PageStorageMiddlewareTestCase(TestCase):
         assert 'cookies' not in payload
 
         fake_response.headers.getlist.return_value = [
-            'id=coo2;test=data2;data=test']
+            b'id=coo2;test=data2;data=test']
         self.instance._set_cookies(payload, fake_response)
         self.assertEqual(payload['cookies'], ['id=coo2'])
         self.assertEqual(self.instance.cookies_seen, set(['id=coo2']))
 
         fake_response.headers.getlist.return_value = [
-            'id=coo1;test=data',
-            'id=coo2;test=data2;data=test',
-            'id=coo3;coo3=data;test=data']
+            b'id=coo1;test=data',
+            b'id=coo2;test=data2;data=test',
+            b'id=coo3;coo3=data;test=data']
         self.instance._set_cookies(payload, fake_response)
         self.assertEqual(payload['cookies'], ['id=coo1', 'id=coo3'])
         self.assertEqual(self.instance.cookies_seen,
