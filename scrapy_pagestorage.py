@@ -35,6 +35,9 @@ class PageStorageMiddleware:
         mode = 'cs'
         if settings.get('PAGE_STORAGE_MODE') == 'VERSIONED_CACHE':
             mode = 'vcs'
+        self.trim_html = False
+        if settings.getbool('PAGE_STORAGE_TRIM_HTML'):
+            self.trim_html = True
         self.enabled, self.on_error_enabled = _get_enabled_status(settings)
         self.limits = {
             'all': crawler.settings.getint('PAGE_STORAGE_LIMIT'),
@@ -80,12 +83,15 @@ class PageStorageMiddleware:
             if response.request.method == 'POST':
                 payload["postdata"] = dict(parse_qsl(response.request.body))
 
-            if len(response.body) > self._writer.maxitemsize:
+            payload["body"] = response.body_as_unicode()
+            if self.trim_html:
+                payload['body'] = payload['body'].strip(' \r\n\0')
+
+            if len(payload['body']) > self._writer.maxitemsize:
                 spider.log("Page not saved, body too large: <%s>" %
                            response.url, level=log.WARNING)
                 return
 
-            payload["body"] = response.body_as_unicode()
             try:
                 self._writer.write(payload)
             except ValueTooLarge as exc:
