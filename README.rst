@@ -31,8 +31,9 @@ Configure the exension through `settings.py`::
     PAGE_STORAGE_MODE = "VERSIONED_CACHE"
     PAGE_STORAGE_LIMIT = 100
     PAGE_STORAGE_ON_ERROR_LIMIT = 100
+    PAGE_STORAGE_TRIM_HTML = True
 
-The extension is auto-enabled for auto-spiders (`SHUB_SPIDER_TYPE` in [`auto`, `portia`]).
+The extension is auto-enabled for Portia spiders (``SHUB_SPIDER_TYPE=portia``).
 
 Settings
 ========
@@ -51,3 +52,9 @@ An integer to set a limit of visited pages amount to store.
 PAGE_STORAGE_ON_ERROR_LIMIT
 ---------------------------
 An integer to set a limit for page errors amount to store.
+
+PAGE_STORAGE_TRIM_HTML
+----------------------
+Default: ``False``
+
+Remove whitespace from the start and end of the HTML to reduce file size.

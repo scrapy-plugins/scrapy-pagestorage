@@ -4,6 +4,7 @@ from unittest import TestCase
 import os
 import types
 from scrapy import Spider
+from scrapy import log
 from scrapy.http import Request, Response, TextResponse
 from scrapy.item import DictItem
 from scrapy.settings import Settings
@@ -176,6 +177,24 @@ class PageStorageMiddlewareTestCase(TestCase):
              '_key': 'bad42100b1d34e29973a79e512aabb4db885b712',
              'cookies': ['coo1=test', 'coo2=tes1'],
              'url': 'http://resp2', '_jobid': '123/45/67'})
+
+    def test_save_response_with_trim(self):
+        self.spider.log = mock.MagicMock()
+        self.instance._writer.maxitemsize = 26
+        self.instance.hsref.job.key = '123/45/67'
+        resp = TextResponse(
+            'http://resp', request=Request('http://req'), encoding='cp1251',
+            body='\r\n\r\n<html><body></body></html>\r\n \0\0\0\0\0')
+        self.instance.save_response(resp, self.spider)
+        self.spider.log.assert_called_with(
+            "Page not saved, body too large: <http://resp>", level=log.WARNING)
+        self.instance.trim_html = True
+        self.instance.save_response(resp, self.spider)
+        self.instance._writer.write.assert_called_with(
+            {u'body': u'<html><body></body></html>', u'_encoding': u'cp1251',
+             u'_type': u'_pageitem',
+             u'_key': u'9b4bed7e56103ddf63455ed39145f61f53b3c702',
+             u'url': u'http://resp', '_jobid': '123/45/67'})
 
     def test_save_cookies(self):
         payload = {}
