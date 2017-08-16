@@ -1,6 +1,7 @@
 """
 Middleware for implementing visited pages storage using hubstorage
 """
+import logging
 import os
 from cgi import parse_qsl
 
@@ -9,14 +10,15 @@ from scrapinghub.hubstorage.utils import urlpathjoin
 from scrapy.exceptions import NotConfigured, IgnoreRequest
 from scrapy.utils.request import request_fingerprint
 from scrapy.http import TextResponse
-from scrapy import log
+from scrapy import log, signals
 from scrapy.item import DictItem, Field
 
-
+logger = logging.getLogger(__name__)
 _COLLECTION_NAME = "Pages"
 
 
 class PageStorageMiddleware:
+
     @classmethod
     def from_crawler(cls, crawler):
         enabled, on_error_enabled = _get_enabled_status(crawler.settings)
@@ -50,11 +52,15 @@ class PageStorageMiddleware:
         self.cookies_seen = set()
         endpoint = urlpathjoin(hsref.project.collections.url,
                                mode, _COLLECTION_NAME)
-        log.msg("HubStorage: writing pages to %s" % endpoint)
+        logger.info("HubStorage: writing pages to %s", endpoint)
         hsref.job.metadata.apipost('collection',
                                    jl=urlpathjoin(mode, _COLLECTION_NAME))
         self._writer = hsref.client.batchuploader.create_writer(
             endpoint, content_encoding='gzip', size=20)
+        crawler.signals.connect(self.spider_closed, signal=signals.spider_closed)
+
+    def spider_closed(self, spider):
+        self._writer.close()
 
     def process_spider_input(self, response, spider):
         if self.enabled and (self.counters['all'] < self.limits['all']):

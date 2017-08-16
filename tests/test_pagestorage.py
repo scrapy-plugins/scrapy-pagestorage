@@ -4,7 +4,7 @@ from unittest import TestCase
 import os
 import types
 from scrapy import Spider
-from scrapy import log
+from scrapy import log, signals
 from scrapy.http import Request, Response, TextResponse
 from scrapy.item import DictItem
 from scrapy.settings import Settings
@@ -40,15 +40,15 @@ class PageStorageMiddlewareTestCase(TestCase):
         self.spider = Spider('default')
         self.mocked_hsref = mock.Mock()
         self.patch = mock.patch('sh_scrapy.hsref.hsref', self.mocked_hsref)
-        crawler_mock = mock.Mock()
-        crawler_mock.settings = Settings(
+        self.crawler_mock = mock.Mock()
+        self.crawler_mock.settings = Settings(
             {'PAGE_STORAGE_ENABLED': True,
              'PAGE_STORAGE_MODE': 'VERSIONED_CACHE',
              'PAGE_STORAGE_LIMIT': 10,
              'PAGE_STORAGE_ON_ERROR_LIMIT': 5})
         self.mocked_hsref.project.collections.url = '/test/url'
         self.patch.start()
-        self.instance = PageStorageMiddleware.from_crawler(crawler_mock)
+        self.instance = PageStorageMiddleware.from_crawler(self.crawler_mock)
 
     @mock.patch('sh_scrapy.hsref.hsref')
     def test_from_crawler(self, mocked_hsref):
@@ -217,6 +217,15 @@ class PageStorageMiddlewareTestCase(TestCase):
         self.assertEqual(payload['cookies'], ['id=coo1', 'id=coo3'])
         self.assertEqual(self.instance.cookies_seen,
                          set(['id=coo1', 'id=coo2', 'id=coo3']))
+
+    def test_writer_closed_on_spider_closed_signal(self):
+        self.crawler_mock.signals.connect.assert_called_once_with(
+            self.instance.spider_closed,
+            signal=signals.spider_closed
+        )
+        with mock.patch.object(self.instance, '_writer') as writer_mock:
+            self.instance.spider_closed(self.spider)
+        writer_mock.close.assert_called_once_with()
 
     def tearDown(self):
         self.patch.stop()
