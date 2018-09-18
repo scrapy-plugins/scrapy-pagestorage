@@ -1,5 +1,5 @@
 language: python
-python: 2.7
+python: 3.6
 branches:
   only:
   - master
@@ -7,6 +7,9 @@ branches:
   - /^v\d\.\d+\.\d+(rc\d+|dev\d+)?$/
 env:
 - TOXENV=py27
+- TOXENV=py33
+- TOXENV=py34
+- TOXENV=py36
 install:
 - pip install -U tox twine wheel codecov
 script: tox

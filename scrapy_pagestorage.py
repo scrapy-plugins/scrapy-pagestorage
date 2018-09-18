@@ -118,7 +118,7 @@ class PageStorageMiddleware:
 
     def _set_cookies(self, payload, response):
         cookies = []
-        for cookie in [x.split(';', 1)[0]
+        for cookie in [x.split(b';', 1)[0].decode('ISO-8859-1')
                        for x in response.headers.getlist('Set-Cookie')]:
             if cookie not in self.cookies_seen:
                 self.cookies_seen.add(cookie)
