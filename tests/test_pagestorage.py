@@ -104,14 +104,15 @@ class PageStorageMiddlewareTestCase(TestCase):
         def sort_requests_and_items(val):
             return val.__class__.__name__
         fake_result = sorted([Request('ftp://req1'), Request('https://req2'),
-                              Response('http://source-request'), DictItem()],
+                              Response('http://source-request'), DictItem(),
+                              {'field1': 'value1'}],
                              key=sort_requests_and_items)
         results = self.instance.process_spider_output(
             fake_response, fake_result, self.spider)
         assert isinstance(results, types.GeneratorType)
-        for r in results:
+        for r in sorted(results, key=sort_requests_and_items):
             assert isinstance(r, type(fake_result.pop(0)))
-            if isinstance(r, DictItem):
+            if isinstance(r, (DictItem, dict)):
                 self.assertEqual(
                     r["_cached_page_id"],
                     request_fingerprint(fake_response.request))
