@@ -2,6 +2,14 @@
 scrapy-pagestorage
 ==================
 
+.. image:: https://img.shields.io/pypi/v/scrapy-pagestorage.svg
+   :target: https://pypi.python.org/pypi/scrapy-pagestorage
+   :alt: PyPI Version
+
+.. image:: https://travis-ci.org/scrapy-plugins/scrapy-pagestorage.svg?branch=master
+   :target: http://travis-ci.org/scrapy-plugins/scrapy-pagestorage
+   :alt: Build Status
+
 A scrapy extension to store requests and responses information in storage service.
 
 Installation
