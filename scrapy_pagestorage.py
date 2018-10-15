@@ -111,6 +111,8 @@ class PageStorageMiddleware:
                 if isinstance(r, DictItem):
                     r.fields["_cached_page_id"] = Field()
                     r._values["_cached_page_id"] = fp
+                elif isinstance(r, dict):
+                    r["_cached_page_id"] = fp
                 yield r
         except Exception as exc:
             self.process_spider_exception(response, exc, spider)
