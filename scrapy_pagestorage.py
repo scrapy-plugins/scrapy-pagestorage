@@ -87,7 +87,7 @@ class PageStorageMiddleware:
             self._set_cookies(payload, response)
 
             if response.request.method == 'POST':
-                payload["postdata"] = dict(parse_qsl(response.request.body))
+                payload["postdata"] = dict(parse_qsl(response.request.body.decode()))
 
             payload["body"] = response.body_as_unicode()
             if self.trim_html:
