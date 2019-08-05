@@ -4,7 +4,7 @@ from unittest import TestCase
 import os
 import types
 from scrapy import Spider
-from scrapy import log, signals
+from scrapy import signals
 from scrapy.http import Request, Response, TextResponse
 from scrapy.item import DictItem
 from scrapy.settings import Settings
@@ -185,17 +185,18 @@ class PageStorageMiddlewareTestCase(TestCase):
              'url': 'http://resp2', '_jobid': '123/45/67'})
 
     def test_save_response_with_trim(self):
-        self.spider.log = mock.MagicMock()
         self.instance._writer.maxitemsize = 26
         self.instance.hsref.job.key = '123/45/67'
         resp = TextResponse(
             'http://resp', request=Request('http://req'), encoding='cp1251',
             body='\r\n\r\n<html><body></body></html>\r\n \0\0\0\0\0')
-        self.instance.save_response(resp, self.spider)
-        self.spider.log.assert_called_with(
-            "Page not saved, body too large: <http://resp>", level=log.WARNING)
+        with mock.patch.object(Spider, 'logger') as log:
+            spider = Spider('default')
+            self.instance.save_response(resp, self.spider)
+        log.warning.assert_called_with(
+            "Page not saved, body too large: <http://resp>")
         self.instance.trim_html = True
-        self.instance.save_response(resp, self.spider)
+        self.instance.save_response(resp, spider)
         self.instance._writer.write.assert_called_with(
             {u'body': u'<html><body></body></html>', u'_encoding': u'cp1251',
              u'_type': u'_pageitem',

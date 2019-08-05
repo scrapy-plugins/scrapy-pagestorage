@@ -10,7 +10,7 @@ from scrapinghub.hubstorage.utils import urlpathjoin
 from scrapy.exceptions import NotConfigured, IgnoreRequest
 from scrapy.utils.request import request_fingerprint
 from scrapy.http import TextResponse
-from scrapy import log, signals
+from scrapy import signals
 from scrapy.item import DictItem, Field
 
 logger = logging.getLogger(__name__)
@@ -94,15 +94,15 @@ class PageStorageMiddleware:
                 payload['body'] = payload['body'].strip(' \r\n\0')
 
             if len(payload['body']) > self._writer.maxitemsize:
-                spider.log("Page not saved, body too large: <%s>" %
-                           response.url, level=log.WARNING)
+                spider.logger.warning("Page not saved, body too large: <%s>" %
+                                      response.url)
                 return
 
             try:
                 self._writer.write(payload)
             except ValueTooLarge as exc:
-                spider.log("Page not saved, %s: <%s>" %
-                           (exc, response.url), level=log.WARNING)
+                spider.logger.warning("Page not saved, %s: <%s>" %
+                                      (exc, response.url))
 
     def process_spider_output(self, response, result, spider):
         fp = request_fingerprint(response.request)
