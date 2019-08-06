@@ -27,6 +27,6 @@ deploy:
   user: scrapyplugins
   on:
     tags: true
-    condition: $TRAVIS_TAG =~ ^v[0-9]+[.][0-9]+[.][0-9]+(rc[0-9]+|dev[0-9]+)?$
+    condition: $TOXENV == py27 && $TRAVIS_TAG =~ ^v[0-9]+[.][0-9]+[.][0-9]+(rc[0-9]+|dev[0-9]+)?$
   password:
     secure: I1R8wU0FOgcgw9UU3Cygc+E7PEzJTOZtOEW088Ko87pRJp2kZp2TDq3LDTFN8986HLi9V6Yc2WEHANaWYG+W2+vEsr2iF5nOyqKtFFAX6y+yvSt+enJBwKyUQ0kIz4E9ttoeU+pDv96wvLo3yIzrpVien1QNAE+m/tinTdBtU0NUSwFnh6cKiJm276VOcLUkCOFW8CaRz+2wSpFgM8naOIVHHTwpCoQ978VBidOlzm3BV+wBGrKCpxRIQi2V5Fj07VmYIfgpcFmja5pzpDzk/gjF8EJ4TKquTCssmpVfIWdRPZ3drBHDUe3Nh6ZED0+6cRMLHHKZhIHt8tzagjZLglgFvRhH6YBaSHMp6walQJetk3R1RZ0rtTibrACJ9+ojq85pBwxKHbmtqScMufbmnEB6kBjRTC9ju7vkBrLIQ81q0SN1B0wVrpRk4zvOiSrNIYmmcN0tguwrHbw0T8GjwgnWMF02/1B3BsqluqiM7d2uA2bENi+RBPnDnbMpDIBeAQZbdkAVgVCuF+ZZNoTW/glMN7i3Wu7+epFU/bsCP2ph6Zal4tsaOJOcFN2ODuOymfKGZqYlIuVnME7Y24htpZB1erg322Ip4rd1Q7E7WQbxgHyytabx8sVYyHTWxkePlxbbCWzfZmYyQF6oFNLH+Ro1pY7Z7qtmR7u1vvfJgJk=
