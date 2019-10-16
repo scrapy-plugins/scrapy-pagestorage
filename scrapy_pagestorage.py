@@ -3,7 +3,6 @@ Middleware for implementing visited pages storage using hubstorage
 """
 import logging
 import os
-from cgi import parse_qsl
 
 from scrapinghub.hubstorage import ValueTooLarge
 from scrapinghub.hubstorage.utils import urlpathjoin
@@ -12,6 +11,11 @@ from scrapy.utils.request import request_fingerprint
 from scrapy.http import TextResponse
 from scrapy import signals
 from scrapy.item import DictItem, Field
+
+try:
+    from cgi import parse_qsl
+except ImportError:
+    from urllib.parse import parse_qsl
 
 logger = logging.getLogger(__name__)
 _COLLECTION_NAME = "Pages"
