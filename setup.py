@@ -17,19 +17,17 @@ setup(
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
     ],
+    python_requires='>=3.5',
     install_requires=[
         'Scrapy>=1.0.3',
         'scrapinghub>=1.9.0',
         'scrapinghub-entrypoint-scrapy>=0.4',
-    ],
-    dependency_links=[
-        'git+https://github.com/scrapinghub/scrapinghub-entrypoint-scrapy.git@0.4#egg=scrapinghub_entrypoint_scrapy-0.4',   # noqa
     ],
 )

@@ -10,12 +10,18 @@ from scrapy.exceptions import NotConfigured, IgnoreRequest
 from scrapy.utils.request import request_fingerprint
 from scrapy.http import TextResponse
 from scrapy import signals
-from scrapy.item import DictItem, Field
+from scrapy.item import Field
 
 try:
     from cgi import parse_qsl
 except ImportError:
     from urllib.parse import parse_qsl
+
+try:
+    from scrapy.item import DictItem as ScrapyItem
+except ImportError:
+    from scrapy.item import Item as ScrapyItem
+
 
 logger = logging.getLogger(__name__)
 _COLLECTION_NAME = "Pages"
@@ -93,7 +99,10 @@ class PageStorageMiddleware:
             if response.request.method == 'POST':
                 payload["postdata"] = dict(parse_qsl(response.request.body.decode()))
 
-            payload["body"] = response.body_as_unicode()
+            try:
+                payload["body"] = response.text
+            except AttributeError:
+                payload["body"] = response.body_as_unicode()
             if self.trim_html:
                 payload['body'] = payload['body'].strip(' \r\n\0')
 
@@ -112,7 +121,7 @@ class PageStorageMiddleware:
         fp = request_fingerprint(response.request)
         try:
             for r in result:
-                if isinstance(r, DictItem):
+                if isinstance(r, ScrapyItem):
                     r.fields["_cached_page_id"] = Field()
                     r._values["_cached_page_id"] = fp
                 elif isinstance(r, dict):

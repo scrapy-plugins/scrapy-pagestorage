@@ -1,18 +1,15 @@
-import mock
-from unittest import TestCase
-
 import os
 import types
-from scrapy import Spider
-from scrapy import signals
+from unittest import mock, TestCase
+
+from scrapy import Spider, signals
 from scrapy.http import Request, Response, TextResponse
-from scrapy.item import DictItem
+from scrapy.item import Item
 from scrapy.settings import Settings
 from scrapy.exceptions import NotConfigured, IgnoreRequest
 from scrapy.utils.request import request_fingerprint
 
-from scrapy_pagestorage import _get_enabled_status
-from scrapy_pagestorage import PageStorageMiddleware
+from scrapy_pagestorage import _get_enabled_status, PageStorageMiddleware
 
 
 def test_get_enabled_status():
@@ -104,7 +101,7 @@ class PageStorageMiddlewareTestCase(TestCase):
         def sort_requests_and_items(val):
             return val.__class__.__name__
         fake_result = sorted([Request('ftp://req1'), Request('https://req2'),
-                              Response('http://source-request'), DictItem(),
+                              Response('http://source-request'), Item(),
                               {'field1': 'value1'}],
                              key=sort_requests_and_items)
         results = self.instance.process_spider_output(
@@ -112,11 +109,11 @@ class PageStorageMiddlewareTestCase(TestCase):
         assert isinstance(results, types.GeneratorType)
         for r in sorted(results, key=sort_requests_and_items):
             assert isinstance(r, type(fake_result.pop(0)))
-            if isinstance(r, (DictItem, dict)):
+            if isinstance(r, (Item, dict)):
                 self.assertEqual(
                     r["_cached_page_id"],
                     request_fingerprint(fake_response.request))
-        bad_fake_request = DictItem()
+        bad_fake_request = Item()
         bad_fake_request._values = None
         self.instance.process_spider_exception = mock.Mock()
         with self.assertRaises(TypeError):
