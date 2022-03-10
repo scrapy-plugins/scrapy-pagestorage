@@ -6,9 +6,17 @@ scrapy-pagestorage
    :target: https://pypi.python.org/pypi/scrapy-pagestorage
    :alt: PyPI Version
 
-.. image:: https://travis-ci.org/scrapy-plugins/scrapy-pagestorage.svg?branch=master
-   :target: http://travis-ci.org/scrapy-plugins/scrapy-pagestorage
+.. image:: https://img.shields.io/pypi/pyversions/scrapy-pagestorage.svg
+   :target: https://pypi.python.org/pypi/scrapy-pagestorage
+   :alt: Python Versions
+
+.. image:: https://github.com/scrapy-plugins/scrapy-pagestorage/actions/workflows/tests.yml/badge.svg
+   :target: https://github.com/scrapy-plugins/scrapy-pagestorage/actions/workflows/tests.yml
    :alt: Build Status
+
+.. image:: https://img.shields.io/codecov/c/github/scrapy-plugins/scrapy-pagestorage/master.svg
+   :target: https://codecov.io/github/scrapy-plugins/scrapy-pagestorage
+   :alt: Coverage report
 
 A scrapy extension to store requests and responses information in storage service.
 

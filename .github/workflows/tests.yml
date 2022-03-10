@@ -28,6 +28,9 @@ jobs:
         - python-version: "3.9"
           env:
             TOXENV: py39
+        - python-version: "3.10"
+          env:
+            TOXENV: py310
 
     steps:
     - uses: actions/checkout@v2
