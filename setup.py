@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='scrapy-pagestorage',
-    version='0.3.0',
+    version='0.4.0',
     url='https://github.com/scrapy-plugins/scrapy-pagestorage',
     description='Scrapy extension to store info in storage service',
     long_description=open('README.rst').read(),
